@@ -1,11 +1,12 @@
 <template>
   <div class="app-wrapper">
-    <Sidebar class="sidebar-container"></Sidebar>
-
-    <div class="main-container clearfix">
-      <Navbar />
-      <PageMain />
-    </div>
+    <Navbar class="navbar-container" :class="isCollapse && 'el-menu--collapse'" />
+    <transition name="fade">
+      <div class="main-container clearfix">
+        <Sidebar class="sidebar-container"></Sidebar>
+        <PageMain class="pagemain-container" />
+      </div>
+    </transition>
   </div>
 </template>
 <script>
@@ -22,11 +23,37 @@ export default {
     Navbar,
     Sidebar,
     PageMain
+  },
+  computed: {
+    isCollapse() {
+      return this.$store.state.sidebarStatu;
+    }
   }
 };
 </script>
 <style lang="scss" scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
 .main-container {
-  margin-top: 60px;
+  min-height: 100%;
+  transition: margin-left 0.28s;
+  margin-left: 180px;
+}
+.navbar-container {
+  transition: width 0.28s;
+  height: 100%;
+  position: fixed;
+  font-size: 0;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1001;
+  overflow: hidden;
+  background-color: #545c64;
 }
 </style>

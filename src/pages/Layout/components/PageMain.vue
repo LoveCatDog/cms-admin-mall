@@ -1,20 +1,22 @@
 <template>
-  <div class="page_main">
-    <div>右侧内容区域</div>
-    <div>右侧内容区域</div>
-    <div>右侧内容区域</div>
-    <div>右侧内容区域</div>
-    <div>右侧内容区域</div>
-    <div>右侧内容区域</div>
-    <div>右侧内容区域</div>
-  </div>
+  <section class="page-main">
+    <div class="page-wrap">
+      <router-view></router-view>
+    </div>
+  </section>
 </template>
 <script>
-export default {};
+export default {
+  name: "page_main"
+};
 </script>
 <style lang="scss" scoped>
-.page_main {
-  border: 1px solid red;
-  padding-left: 20rem;
+.page-main {
+  background: #f8f8f8;
+  margin-top: -16px;
+
+  .page-wrap {
+    padding: 15px;
+  }
 }
 </style>

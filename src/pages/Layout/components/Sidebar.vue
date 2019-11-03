@@ -2,36 +2,104 @@
   <div class="sidebar_main">
     <header>
       <div class="navbar">
-        <div class="logo-info flex">
-          <img src="@/assets/images/logo1.png" class="logo" />
-          <p class="title">商城后台管理系统</p>
-        </div>
-        <div class="user-info flex">
-          <img src="@/assets/images/user_header_logo.png" class="user-img" />
-          <span class="user-name">会吃鱼的猫</span>
-          <router-link to="/login">
-            <el-button plain class="exit-btn">退出</el-button>
-          </router-link>
+        <Hamburger
+          class="hamburger-container"
+          :toggleClick="TogglesSideBar"
+          :isActive="currentModel"
+        ></Hamburger>
+
+        <el-breadcrumb separator-class="el-icon-arrow-right" style="flex:1 1;">
+          <el-breadcrumb-item
+            :to="{ path: item.path }"
+            v-for="(item,index) in breadList"
+            :key="index"
+          >
+            <span
+              class="no-redirect"
+              v-if="item.redirect === 'noredirect' || index ===breadList.length-1"
+            >{{item.meta.title}}</span>
+            <router-link v-else :to="item.redirect||item.path">{{item.meta.title}}</router-link>
+          </el-breadcrumb-item>
+        </el-breadcrumb>
+        <div class="user-info">
+          <el-dropdown>
+            <span class="el-dropdown-link flex">
+              <img src="@/assets/images/user_header_logo.png" class="user-img" />
+              <span class="user-name">会吃鱼的猫</span>
+              <i class="el-icon-arrow-down el-icon--right"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>
+                <router-link to="/login">退出</router-link>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </div>
       </div>
     </header>
   </div>
 </template>
 <script>
-export default {};
+import { mapGetters } from "vuex";
+import Hamburger from "@/components/utils/Hamburger";
+export default {
+  data() {
+    return {
+      breadList: [] // 路由集合
+    };
+  },
+  watch: {
+    $route() {
+      this.getBreadcrumb();
+    }
+  },
+  computed: {
+    currentModel() {
+      return this.$store.state.sidebarStatu;
+    }
+  },
+  components: {
+    Hamburger
+  },
+  methods: {
+    TogglesSideBar() {
+      this.$store.commit("handleSidebar");
+    },
+    isHome(route) {
+      return route.meta.title === "首页";
+    },
+    getBreadcrumb() {
+      let matched = this.$route.matched;
+      //如果不是首页\
+
+      if (!this.isHome(matched[0])) {
+        matched = [{ path: "/home", meta: { title: "首页" } }].concat(matched);
+      } else {
+        let arr = [];
+        matched = arr.concat(matched[0]);
+      }
+      console.log("wujia", matched);
+      this.breadList = matched;
+    }
+  },
+  created() {
+    this.getBreadcrumb();
+  }
+};
 </script>
 <style lang="scss" scoped>
 .sidebar_main {
+  .hamburger-container {
+    line-height: 58px;
+    height: 50px;
+    float: left;
+    padding: 0 10px;
+  }
   .navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 20;
-    right: 0;
     height: 60px;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
-    background: #59a5e6;
+    background: #fff;
     border-bottom: 1px solid #eaecef;
     padding: 10px 20px;
     line-height: 30px;
@@ -64,10 +132,23 @@ export default {};
       }
       .user-name {
         margin-right: 30px;
-        color: #fff;
+        color: #999;
         cursor: pointer;
       }
     }
+  }
+}
+.app-breadcrumb.el-breadcrumb {
+  display: inline-block;
+  font-size: 14px;
+  line-height: 50px;
+  margin-left: 10px;
+}
+.el-breadcrumb__item:last-child .el-breadcrumb__inner a {
+  color: #97a8be;
+  cursor: text;
+  &:hover {
+    color: #97a8be;
   }
 }
 </style>
